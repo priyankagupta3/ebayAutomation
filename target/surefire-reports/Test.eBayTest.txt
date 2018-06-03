@@ -1,0 +1,28 @@
+-------------------------------------------------------------------------------
+Test set: Test.eBayTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 1, Errors: 0, Skipped: 2, Time elapsed: 29.28 s <<< FAILURE! - in Test.eBayTest
+setUp(Test.eBayTest)  Time elapsed: 28.211 s  <<< FAILURE!
+org.openqa.selenium.WebDriverException: 
+It is impossible to create a new session because 'createSession' which takes HttpClient, InputStream and long was not found or it is not accessible
+Build info: version: '3.12.0', revision: '7c6e0b3', time: '2018-05-08T14:04:26.12Z'
+System info: host: 'PRIYANKA-GUPTA', ip: '192.168.96.165', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.8.0_31'
+Driver info: driver.version: MobileDriver
+	at Test.eBayTest.setUp(eBayTest.java:34)
+Caused by: java.lang.reflect.InvocationTargetException
+	at Test.eBayTest.setUp(eBayTest.java:34)
+Caused by: org.openqa.selenium.WebDriverException: 
+An unknown server-side error occurred while processing the command. Original error: Unable to find an active device or emulator with OS 6.0.1. The following are available: emulator-5554 (7.0)
+Build info: version: '3.12.0', revision: '7c6e0b3', time: '2018-05-08T14:04:26.12Z'
+System info: host: 'PRIYANKA-GUPTA', ip: '192.168.96.165', os.name: 'Windows 7', os.arch: 'amd64', os.version: '6.1', java.version: '1.8.0_31'
+Driver info: driver.version: MobileDriver
+remote stacktrace: UnknownError: An unknown server-side error occurred while processing the command. Original error: Unable to find an active device or emulator with OS 6.0.1. The following are available: emulator-5554 (7.0)
+    at getResponseForW3CError (C:\Program Files (x86)\Appium\resources\app\node_modules\appium-base-driver\lib\protocol\errors.js:800:13)
+    at asyncHandler$ (C:\Program Files (x86)\Appium\resources\app\node_modules\appium-base-driver\lib\protocol\protocol.js:352:37)
+    at tryCatch (C:\Program Files (x86)\Appium\resources\app\node_modules\appium-base-driver\node_modules\babel-runtime\regenerator\runtime.js:67:40)
+    at GeneratorFunctionPrototype.invoke [as _invoke] (C:\Program Files (x86)\Appium\resources\app\node_modules\appium-base-driver\node_modules\babel-runtime\regenerator\runtime.js:315:22)
+    at GeneratorFunctionPrototype.prototype.(anonymous function) [as next] (C:\Program Files (x86)\Appium\resources\app\node_modules\appium-base-driver\node_modules\babel-runtime\regenerator\runtime.js:100:21)
+    at GeneratorFunctionPrototype.invoke (C:\Program Files (x86)\Appium\resources\app\node_modules\appium-base-driver\node_modules\babel-runtime\regenerator\runtime.js:136:37)
+    at <anonymous>
+	at Test.eBayTest.setUp(eBayTest.java:34)
+

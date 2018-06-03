@@ -1,101 +1,98 @@
-package Test;
+    package Test;
+    import java.net.MalformedURLException;
+    import java.util.Map;
 
-import static org.testng.AssertJUnit.assertEquals;
+    import Models.Buy;
+    import Models.Search;
+    import ObjectRepository.LoginObjects;
+    import Screens.ProductDetail;
+    import Screens.LoginOperation;
+    import Screens.SearchProduct;
+    import Screens.CheckOut;
+    import org.openqa.selenium.support.PageFactory;
+    import org.testng.Assert;
+    import org.testng.annotations.BeforeSuite;
+    import org.testng.annotations.Test;
+    import Drivers.MobileDriver;
+    import ObjectRepository.SearchObjects;
+    import io.appium.java_client.android.AndroidDriver;
+    import io.appium.java_client.android.AndroidElement;
+    import util.Commands;
+    import org.openqa.selenium.ScreenOrientation;
+    import util.ExcelUtility;
+    import util.PropertiesReader;
 
-import java.net.MalformedURLException;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+    public class eBayTest {
 
-import json.reader.JSONReader;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.PageFactory;
-import org.testng.Assert;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.Test;
 
-import com.ebay.Driver.MobileDriver;
-import Models.Data;
-import ObjectRepository.Login;
-import ObjectRepository.Search;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidElement;
+        AndroidDriver<AndroidElement> androidDriver;
+        LoginObjects logino;
+        SearchObjects search;
+        String productName;
+        PropertiesReader propertiesReader;
 
-public class eBayTest {
+        @BeforeSuite
+        public void setUp() throws InterruptedException {
+            MobileDriver initialize = new MobileDriver();
+            try {
+                androidDriver = initialize.initializeDriver( );
+                ExcelUtility.CreateDatabase();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            logino = PageFactory.initElements(androidDriver, LoginObjects.class);
+            search = PageFactory.initElements(androidDriver,SearchObjects.class);
+            propertiesReader = PropertiesReader.getInstance();
+            androidDriver.rotate(ScreenOrientation.PORTRAIT);
+       }
 
-	
-	AndroidDriver<AndroidElement> androidDriver;
-	Login logino;
-	Search search;
-	
-	@BeforeSuite
-	public void setUp() throws InterruptedException {
-		MobileDriver initialize = new MobileDriver();
-        try {
-            androidDriver = initialize.initializeDriver( );
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+        @Test(priority = '1')
+        public void Login() throws InterruptedException {
+
+            LoginOperation.clickHomeMenu(logino);
+            LoginOperation.performLogin(logino,androidDriver);
         }
-        logino = PageFactory.initElements(androidDriver,Login.class);
-		search = PageFactory.initElements(androidDriver,Search.class);
-	}
-	
-	@Test(priority = '1')
-	public void performLogin() throws InterruptedException {
-        JSONReader JSONReader = new JSONReader();
-        List list = JSONReader.read("Data.json", Data.class);
-        Data data = (Data)list.get(0);
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-	    logino.getMenu().click();
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        logino.getSigninlogo().click();
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        logino.getUsername().sendKeys(data.getUsername());
-        logino.getPassword().sendKeys(data.getPassword());
-        logino.getSignIn().click();
-        androidDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
-        Assert.assertEquals(logino.getNoThanksLink().getText(), "No thanks");
-        logino.getNoThanksLink().click();
-	}
 
-    @Test(priority = '2')
-	public void performSearchandCheckout() throws InterruptedException {
+        @Test(priority = '2')
+        public void performSearchandCheckout() throws InterruptedException {
+            Search searchData = null;
 
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        search.getSearchBox().click();
-        search.getSearchTextBox().sendKeys("65-inch TV");
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            for (Map.Entry<String, Search> entry : ExcelUtility.searchMap.entrySet()) {
+                String key = entry.getKey();
+                if (key.equalsIgnoreCase("Search")) {
+                    searchData = entry.getValue();
+                }
+            }
 
-        List searchOptionslist =  search.getSearchOptions();
-        ((WebElement)searchOptionslist.get(0)).click();
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            if(search.getSaveIcon().getText().equalsIgnoreCase("Saved")){
-            search.getSaveIcon().click();
-            search.getSaveIcon().click();
-                androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            search.getSaveButton().click();
-                androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+                SearchProduct.searchProduct(search, searchData.getSearchtext());
+                SearchProduct.saveSearch(search);
+                SearchProduct.selectFromSearchListResult(search);
+                String productPrice = ProductDetail.getProductPrice(search).concat("00");
+
+
+                ProductDetail.clickProductBuyItNowButton(search);
+                ProductDetail.clickProductReviewButton(search);
+
+                CheckOut.scrollCheckOutPage(search, androidDriver, productPrice);
+                   String ActualResult = Commands.getText(CheckOut.getItemPrice(androidDriver));
+                   Assert.assertEquals(search.splitString(productPrice.trim()).toString() , search.splitString(ActualResult.trim()).toString());
+
+
+                CheckOut.clickProceedToPayButton(search, androidDriver);
+
+                CheckOut.selectPaymentMethod(search);
+
+                Buy buy = null;
+                for (Map.Entry<String, Buy> entry : ExcelUtility.buyMap.entrySet()) {
+                    String key = entry.getKey();
+                    if (key.equalsIgnoreCase("Buy")) {
+                        buy = entry.getValue();
+                    }
+                }
+
+                CheckOut.payNow(search,buy);
+
+            }
+
         }
-        else{
-            search.getSaveIcon().click();
-                androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-            search.getSaveButton().click();
-                androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        }
-        List searchResultslist =  search.getSearchResults();
-        ((WebElement)searchResultslist.get(0)).click();
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        String actualresult = search.getProductPriceText();
 
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        search.getBuyItNow().click();
-        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        search.getReview().click();
-         androidDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-        androidDriver.findElementByAndroidUIAutomator("new UiScrollable(new UiSelector()).scrollIntoView(text(\"Proceed to Pay\"));");
-        androidDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
-   
-        Assert.assertEquals(search.splitString(actualresult), search.splitString(search.getPriceContainer().getText()));
-
-}
-
-}
