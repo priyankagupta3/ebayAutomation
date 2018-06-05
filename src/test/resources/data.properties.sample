@@ -1,0 +1,11 @@
+# Following property is use to set Mobile Platform
+PLATFORMNAME=Android
+
+# Following property is use to set Device Name - Real or Virtual
+DEVICE_NAME = Redmi
+
+# Following property is use to set Platform Version
+PLATFORM_VERSION = 5.1.1
+
+# Following property is use to set Appium Server URL
+APPIUM_SERVER_URL=http://0.0.0.0:4723/wd/hub

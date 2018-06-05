@@ -20,12 +20,14 @@ public class ExcelUtility {
 	static 	HSSFWorkbook  ObjWorkBook;
 	static HSSFSheet sheet;
 	public static FileInputStream fis;
-	static  String sheetname;
-	static public Map<String, Login> loginMap = new HashMap<>();
-	static public Map<String, Search>   searchMap = new HashMap<>();
+	static public Map<String, Login>  loginMap = new HashMap<>();
+	static public Map<String, Search> searchMap = new HashMap<>();
 	static public Map<String, Buy>    buyMap = new HashMap<>();
 
 
+	/**
+	 * This method Creates Data Structure
+	 */
 	public static void CreateDatabase(){
 
 		try {
@@ -38,7 +40,7 @@ public class ExcelUtility {
                 e.printStackTrace();
             }
             path = basePath + "/src/test/resources/RegressionTestSuite.xls";
-			 readWorkBook(path);
+			readWorkBook(path);
 			readLoginSheet("Login");
 			readProductName("Search");
             readBuySheet("Buy");
@@ -48,12 +50,15 @@ public class ExcelUtility {
 
 	}
 
-	public static void readWorkBook(String path ) throws IOException {
+	/**
+	 * Method to Read the Input File
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public static void readWorkBook(String filePath) throws IOException {
 
 		try {
-
-			fis = new FileInputStream(path);
-
+			fis = new FileInputStream(filePath);
 			if (fis != null) {
 				ObjWorkBook = new HSSFWorkbook(fis);
 			}
@@ -61,26 +66,34 @@ public class ExcelUtility {
 		catch(Exception e)
 		{
 			System.out.println(e);
-
 		}
 	}
 
+	/**
+	 * Method to read Search Item from Product column of Search Sheet
+	 * @param sheetname
+	 * @throws IOException
+	 */
 	public static void readProductName(String sheetname) throws IOException {
 
 		if (ObjWorkBook != null) {
 			sheet = ObjWorkBook.getSheet(sheetname.trim());
-
 			if (sheet.getRow(1) != null) {
 				Row row = sheet.getRow(1);
 				searchMap.put(sheetname, buildProductData(row));
 			}
 		}
 	}
+
+	/**
+	 * Method to read Login Credentials from Login Sheet
+	 * @param sheetname
+	 * @throws IOException
+	 */
 	public static void readLoginSheet(String sheetname) throws IOException {
 
 		if (ObjWorkBook != null) {
 			sheet = ObjWorkBook.getSheet(sheetname.trim());
-
 			if (sheet.getRow(1) != null) {
 				Row row = sheet.getRow(1);
 				loginMap.put(sheetname, buildLoginData(row));
@@ -88,7 +101,11 @@ public class ExcelUtility {
 		}
 	}
 
-
+	/**
+	 * Method to read Debit Card details from But Sheet
+	 * @param sheetname
+	 * @throws IOException
+	 */
 	public static void readBuySheet(String sheetname  ) throws IOException {
 
 		if (ObjWorkBook != null) {
@@ -102,7 +119,11 @@ public class ExcelUtility {
 		}
 	}
 
-
+	/**
+	 * Read cells from Login Sheet
+	 * @param row
+	 * @return
+	 */
 	public static Login buildLoginData(Row row){
 
 		Login login = new Login();
@@ -112,6 +133,12 @@ public class ExcelUtility {
 		login.setPassword(cell1.toString());
 		return login;
 	}
+
+	/**
+	 * Read cells from Search Sheet
+	 * @param row
+	 * @return
+	 */
 	public static Search buildProductData(Row row){
 
 		Search productData = new Search();
@@ -120,6 +147,11 @@ public class ExcelUtility {
 		return productData;
 	}
 
+	/**
+	 * Read cells from Buy Sheet
+	 * @param row
+	 * @return
+	 */
 	public static Buy buildCheckout(Row row){
 		Buy buy = new Buy();
 		Cell cell0 = row.getCell(0);
@@ -130,8 +162,6 @@ public class ExcelUtility {
 		buy.setcvc(cell2.toString());
 		return buy;
 	}
-
-
 
 }		
 

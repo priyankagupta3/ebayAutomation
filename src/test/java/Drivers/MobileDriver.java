@@ -7,6 +7,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.TimeUnit;
+
 import util.PropertiesReader;
 
 public class MobileDriver {
@@ -17,19 +19,18 @@ public class MobileDriver {
     public AndroidDriver<AndroidElement> initializeDriver() throws InterruptedException, MalformedURLException {
 
 
-      String  platformName ;
-        String  browserName;
-          String  deviceName;
-         String  versionName;
-         String  appiumServerURL;
+        String  platformName ;
+        String  deviceName;
+        String  versionName;
+        String  appiumServerURL;
         PropertiesReader propertiesReader;
 
 
-            propertiesReader = PropertiesReader.getInstance();
-            platformName = propertiesReader.getProperty("platformName");
-            deviceName = propertiesReader.getProperty("DEVICE_NAME");
-            versionName = propertiesReader.getProperty("PLATFORM_VERSION");
-            appiumServerURL = propertiesReader.getProperty("APPIUM_SERVER_URL");
+        propertiesReader = PropertiesReader.getInstance();
+        platformName = propertiesReader.getProperty("platformName");
+        deviceName = propertiesReader.getProperty("DEVICE_NAME");
+        versionName = propertiesReader.getProperty("PLATFORM_VERSION");
+        appiumServerURL = propertiesReader.getProperty("APPIUM_SERVER_URL");
 
 
         File f = new File("src");
@@ -42,7 +43,7 @@ public class MobileDriver {
         capabilities.setCapability(MobileCapabilityType.APP, appPath.getAbsolutePath());
 
         androidDriver = new AndroidDriver(new URL(appiumServerURL), capabilities);
-        Thread.sleep(5000);
+        androidDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
 
 
         return androidDriver;

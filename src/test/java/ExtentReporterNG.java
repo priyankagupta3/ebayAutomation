@@ -3,7 +3,6 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import org.testng.*;
 import org.testng.xml.XmlSuite;
-
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,7 +11,13 @@ import java.util.Map;
 
 public class ExtentReporterNG implements IReporter {
     private ExtentReports extent;
- 
+
+    /**
+     * To generate test Report
+     * @param xmlSuites
+     * @param suites
+     * @param outputDirectory
+     */
     public void generateReport(List<XmlSuite> xmlSuites, List<ISuite> suites, String outputDirectory) {
         extent = new ExtentReports(outputDirectory + File.separator + "ExtentReportsTestNG.html", true);
  
@@ -38,10 +43,7 @@ public class ExtentReporterNG implements IReporter {
         if (tests.size() > 0) {
             for (ITestResult result : tests.getAllResults()) {
                 test = extent.startTest(result.getMethod().getMethodName());
- 
-                /*test.getTest(). = getTime(result.getStartMillis());
-                test.getTest().endedTime = getTime(result.getEndMillis());*/
- 
+
                 for (String group : result.getMethod().getGroups())
                     test.assignCategory(group);
  

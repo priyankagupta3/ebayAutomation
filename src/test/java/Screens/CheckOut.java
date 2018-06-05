@@ -2,88 +2,102 @@
 
         import ObjectRepository.SearchObjects;
         import io.appium.java_client.MobileBy;
-        import io.appium.java_client.MobileElement;
-        import io.appium.java_client.PerformsTouchActions;
         import io.appium.java_client.android.AndroidDriver;
         import io.appium.java_client.android.AndroidElement;
-        import io.appium.java_client.touch.TapOptions;
-        import io.appium.java_client.touch.WaitOptions;
         import io.appium.java_client.touch.offset.PointOption;
         import org.openqa.selenium.*;
-        import org.testng.Assert;
         import util.Commands;
         import io.appium.java_client.TouchAction;
         import Models.Buy;
-        import java.time.Duration;
         import java.util.List;
         import java.util.concurrent.TimeUnit;
 
         public class CheckOut {
 
-
-            public static void scrollCheckOutPage(SearchObjects search, AndroidDriver<AndroidElement> androidDriver, String price) throws InterruptedException {
-
-                Commands.waitUntilElementIsVisible(search.getWebView(), 60);
-                System.out.println(search.getWebView().getText());
-                androidDriver.findElementByAndroidUIAutomator(" new UiScrollable(new UiSelector()).scrollIntoView(text(\"Proceed to Pay\"));");
+            /**
+             * Method to Scroll down the "Review your order" Page
+             * @param searchObject
+             * @param androidDriver
+             * @throws InterruptedException
+             */
+            public static void scrollCheckOutPage(SearchObjects searchObject, AndroidDriver<AndroidElement> androidDriver) throws InterruptedException {
+                Commands.waitUntilElementIsVisible(searchObject.getWebView(), 60,androidDriver);
                 int pressX = androidDriver.manage().window().getSize().width / 2;
                 int bottomY = androidDriver.manage().window().getSize().height * 4 / 5;
-                int topY = androidDriver.manage().window().getSize().height / 4;
+                int topY = androidDriver.manage().window().getSize().height / 8;
                 TouchAction touchAction = new TouchAction(androidDriver);
                 touchAction.longPress(PointOption.point(pressX, bottomY)).moveTo(PointOption.point(pressX, topY)).release().perform();
-
             }
 
-
+            /**
+             * Method to get the Item Price being displayed at "Review your order" Page
+             * @param androidDriver
+             * @return
+             */
             public static WebElement getItemPrice(AndroidDriver<AndroidElement> androidDriver) {
-                androidDriver.manage().timeouts().implicitlyWait(40, TimeUnit.SECONDS);
-                List list = androidDriver.findElements(By.xpath("//android.view.View[5]/android.widget.ListView/android.view.View[2]"));
+                androidDriver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+                int pressX = androidDriver.manage().window().getSize().width / 2;
+                int bottomY = androidDriver.manage().window().getSize().height * 4 / 5;
+                int topY = androidDriver.manage().window().getSize().height / 8;
+                TouchAction touchAction = new TouchAction(androidDriver);
+                touchAction.longPress(PointOption.point(pressX, bottomY)).moveTo(PointOption.point(pressX, topY)).release().perform();
+                List list = androidDriver.findElements(By.xpath("//android.widget.ListView[@index='0']/android.view.View[2]"));
                 return ((WebElement) list.get(0));
             }
 
-
-            public static void clickProceedToPayButton(SearchObjects search, AndroidDriver<AndroidElement> androidDriver) throws InterruptedException {
-                Commands.waitUntilElementIsClickable(search.getProceedtoPayButton(), 60);
-                int x1 = (int) (search.getProceedtoPayButton().getLocation().getX());
-                int y1 = (int) (search.getProceedtoPayButton().getLocation().getY());
+            /**
+             * Method to get at "Proceed To Pay" button being displayed at "Review your order" Page
+             * @param searchObject
+             * @param androidDriver
+             * @throws InterruptedException
+             */
+            public static void clickProceedToPayButton(SearchObjects searchObject, AndroidDriver<AndroidElement> androidDriver) throws InterruptedException {
+                Commands.waitUntilElementIsClickable(searchObject.getProceedtoPayButton(), 60,androidDriver);
+                int x1 = (int) (searchObject.getProceedtoPayButton().getLocation().getX());
+                int y1 = (int) (searchObject.getProceedtoPayButton().getLocation().getY());
                 new TouchAction(androidDriver).press(PointOption.point(x1, y1)).waitAction().release().perform();
-                Commands.click(search.getProceedtoPayButton());
+                Commands.click(searchObject.getProceedtoPayButton());
             }
 
-            public static void selectPaymentMethod(SearchObjects search) {
-                Commands.waitUntilElementIsClickable(search.getDebitCardButton(), 60);
-                Commands.click(search.getDebitCardButton());
-                Commands.waitUntilElementIsClickable(search.getDebitCardType(), 60);
-                Commands.click(search.getDebitCardType());
-                Commands.waitUntilElementIsClickable(search.getPayNow(), 60);
-                Commands.click(search.getPayNow());
+            /**
+             * Method to Select Payment Method, if Selected Payment Method as Debit Card, then to Select Debit Card Type/Bank
+             * @param searchObject
+             * @param androidDriver
+             */
+            public static void selectPaymentMethod(SearchObjects searchObject,AndroidDriver<AndroidElement> androidDriver) {
+                Commands.waitUntilElementIsClickable(searchObject.getDebitCardButton(), 60,androidDriver);
+                Commands.click(searchObject.getDebitCardButton());
+                Commands.waitUntilElementIsClickable(searchObject.getDebitCardType(), 60,androidDriver);
+                Commands.click(searchObject.getDebitCardType());
+                Commands.waitUntilElementIsClickable(searchObject.getPayNow(), 60,androidDriver);
+                Commands.click(searchObject.getPayNow());
             }
 
-            public static void payNow(SearchObjects search,Buy b1){
+            /**
+             * Method to enter the Card Details - Card Number,Name on Card,
+             * Expiry Month/Year and CVV Code to Purchase the products
+             * @param searchObject
+             * @param buy
+             * @param androidDriver
+             */
 
-                Commands.waitUntilElementIsClickable(search.getMonth(),60);
-                Commands.click(search.getMonth());
+            public static void payNow(SearchObjects searchObject,Buy buy,AndroidDriver<AndroidElement> androidDriver){
 
-                Commands.waitUntilElementIsClickable(search.getMonthOption(),60);
-                Commands.click(search.getMonthOption());
-
-                Commands.waitUntilElementIsClickable(search.getYear(),60);
-                Commands.click(search.getYear());
-
-                Commands.waitUntilElementIsClickable(search.getYearOption(),60);
-                Commands.click(search.getYearOption());
-
-                Commands.waitUntilElementIsClickable(search.getCvv(),60);
-                Commands.textBoxType(search.getCvv(),b1.getcvc());
-
-                Commands.waitUntilElementIsClickable(search.getNameonCard(),60);
-                Commands.textBoxType(search.getNameonCard(),b1.getCardName());
-
-                Commands.waitUntilElementIsClickable(search.getCardNumber(),60);
-                Commands.textBoxType(search.getCardNumber(),b1.getCardNumber());
-
-
-                Commands.waitUntilElementIsClickable(search.getPayNow(),60);
-                Commands.click(search.getPayNow());
+                Commands.waitUntilElementIsClickable(searchObject.getMonth(),60,androidDriver);
+                Commands.click(searchObject.getMonth());
+                Commands.waitUntilElementIsClickable(searchObject.getMonthOption(),60,androidDriver);
+                Commands.click(searchObject.getMonthOption());
+                Commands.waitUntilElementIsClickable(searchObject.getYear(),60,androidDriver);
+                Commands.click(searchObject.getYear());
+                Commands.waitUntilElementIsClickable(searchObject.getYearOption(),60,androidDriver);
+                Commands.click(searchObject.getYearOption());
+                Commands.waitUntilElementIsClickable(searchObject.getCvv(),60,androidDriver);
+                Commands.textBoxType(searchObject.getCvv(),buy.getcvc());
+                Commands.waitUntilElementIsClickable(searchObject.getNameonCard(),60,androidDriver);
+                Commands.textBoxType(searchObject.getNameonCard(),buy.getCardName());
+                Commands.waitUntilElementIsClickable(searchObject.getCardNumber(),60,androidDriver);
+                Commands.textBoxType(searchObject.getCardNumber(),buy.getCardNumber());
+                Commands.waitUntilElementIsClickable(searchObject.getPayNow(),60,androidDriver);
+                Commands.click(searchObject.getPayNow());
         }
         }

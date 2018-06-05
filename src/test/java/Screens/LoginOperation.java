@@ -1,41 +1,44 @@
-    package Screens;
-    import ObjectRepository.LoginObjects;
-    import io.appium.java_client.android.AndroidDriver;
-    import io.appium.java_client.android.AndroidElement;
-    import org.testng.Assert;
-    import util.Commands;
-    import Models.Login;
-    import java.util.Map;
-    import java.util.concurrent.TimeUnit;
-    import util.ExcelUtility;
+package Screens;
 
-    public class LoginOperation {
-
-        public static void clickHomeMenu(LoginObjects logino){
-            Commands.waitUntilElementIsClickable(logino.getMenu(),60);
-            Commands.click(logino.getMenu());
-        }
-
-        public static void performLogin(LoginObjects logino,AndroidDriver<AndroidElement> androidDriver) {
-
-            Commands.waitUntilElementIsClickable(logino.getSigninlogo(), 60);
-            Commands.click(logino.getSigninlogo());
-            Commands.waitUntilElementIsClickable(logino.getUsername(), 60);
-            Login b1 = null;
-            for (Map.Entry<String, Login> entry : ExcelUtility.loginMap.entrySet()) {
-                String key = entry.getKey();
-                if (key.equalsIgnoreCase("Login")) {
-                    b1 = entry.getValue();
-                }
+import ObjectRepository.LoginObjects;
+import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.AndroidElement;
+import util.Commands;
+import Models.Login;
+import java.util.concurrent.TimeUnit;
 
 
-                Commands.textBoxType(logino.getUsername(), b1.getUsername());
-                Commands.textBoxType(logino.getPassword(), b1.getPassword());
-                Commands.click(logino.getSignIn());
-                androidDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-                Commands.waitUntilElementIsClickable(logino.getNoThanksLink(), 60);
-                Commands.verify(logino.getNoThanksLink().getText(), "No thanks");
-                Commands.click(logino.getNoThanksLink());
-            }
-        }
+public class LoginOperation {
+
+
+    /**
+     * Method to Click at Hamburger Menu being displayed at Home Page
+     * @param loginObject
+     * @param androidDriver
+     */
+    public static void clickHomeMenu(LoginObjects loginObject,AndroidDriver<AndroidElement> androidDriver){
+        Commands.waitUntilElementIsClickable(loginObject.getMenu(),60,androidDriver);
+        Commands.click(loginObject.getMenu());
     }
+
+    /**
+     * Method to Perform Login Operation at eBay Application
+     * @param loginObject
+     * @param androidDriver
+     * @param login
+     */
+    public static void performLogin(LoginObjects loginObject,AndroidDriver<AndroidElement> androidDriver,Login login) {
+
+        Commands.waitUntilElementIsClickable(loginObject.getSigninlogo(), 60,androidDriver);
+        Commands.click(loginObject.getSigninlogo());
+        Commands.waitUntilElementIsClickable(loginObject.getUsername(), 60,androidDriver);
+        Commands.textBoxType(loginObject.getUsername(), login.getUsername());
+        Commands.textBoxType(loginObject.getPassword(), login.getPassword());
+        Commands.click(loginObject.getSignIn());
+        androidDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        Commands.waitUntilElementIsClickable(loginObject.getNoThanksLink(), 60,androidDriver);
+        Commands.verify(loginObject.getNoThanksLink().getText(), "No thanks");
+        Commands.click(loginObject.getNoThanksLink());
+    }
+}
+

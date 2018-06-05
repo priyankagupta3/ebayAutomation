@@ -10,7 +10,7 @@
 
     <test name="eBayTest">
         <classes>
-            <class name="Test.eBayTest" />
+            <class name="Test.EBayTest" />
         </classes>
     </test>
 
